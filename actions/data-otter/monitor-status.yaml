@@ -1,0 +1,28 @@
+name: Data-Otter-Monitor-Status
+
+on:
+  workflow_call:
+    inputs:
+      applicationId:
+        description: "The ID of the application"
+        required: true
+        type: number
+      monitorId:
+        description: "The ID of the monitor"
+        required: true
+        type: string
+      active:
+        description: "The status"
+        required: true
+        type: boolean
+
+jobs:
+  submit-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make POST request
+        run: |
+          IFS=',' read -ra MONITOR_IDS <<< "${{ inputs.monitorId }}"
+          for id in "${MONITOR_IDS[@]}"; do
+            curl -X POST "http://monitoring.zgamelogic.com:8080/monitors/${{ inputs.applicationId }}/${id}/active/${{ inputs.active }}"
+          done
