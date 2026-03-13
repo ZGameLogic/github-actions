@@ -11,10 +11,10 @@ on:
         description: "List of data otter monitor IDs to disable during deployment"
         required: true
         type: string
-      nameSpace:
-        description: "The Kubernetes namespace to deploy to"
+      environment:
+        description: 'Environment'
+        type: environment
         required: true
-        type: string
       deploymentName:
         description: "The name of the Kubernetes deployment to update"
         required: true
@@ -57,14 +57,15 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ghcr.io/zgamelogic/${{ inputs.imageName }}:${{ inputs.namespace }}
+          tags: ghcr.io/zgamelogic/${{ inputs.imageName }}:${{ inputs.environment }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: SPRING_PROFILES_ACTIVE=${{ inputs.nameSpace }}
+          build-args: SPRING_PROFILES_ACTIVE=${{ inputs.environment }}
           ## in the docker file add these lines to use the right active profile
           ## ARG SPRING_PROFILES_ACTIVE
           ## ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
   disable-monitor:
     uses: ./../data-otter/monitor-status.yaml
+    if: ${{ inputs.environment == 'production' }}
     needs: build
     with:
       applicationId: ${{ inputs.applicationId }}
@@ -73,19 +74,22 @@ jobs:
   Kubernetes:
     runs-on: PiServer
     needs: disable-monitor
+    if: ${{ !cancelled() && (needs.disable-monitor.result == 'success' || needs.disable-monitor.result == 'skipped') }}
     steps:
       - name: Checkout Kubernetes Directory
         uses: actions/checkout@v4
         with:
           sparse-checkout: 'kubernetes/'
       - name: Apply Kubernetes Configuration
-        run: sudo kubectl apply -f kubernetes/${{inputs.nameSpace}} -n ${{ inputs.nameSpace }}
+        run: sudo kubectl apply -f kubernetes/${{inputs.environment}} -n ${{ inputs.environment }}
       - name: Rolling update
-        run: sudo kubectl rollout restart deployment ${{ inputs.deploymentName }} -n ${{ inputs.nameSpace }}
+        run: sudo kubectl rollout restart deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }}
       - name: Wait for readiness probe
-        run: sudo kubectl rollout status deployment deployment ${{ inputs.deploymentName }} -n ${{ inputs.nameSpace }} --timeout=600s
+        if: ${{ inputs.environment == 'production' }}
+        run: sudo kubectl rollout status deployment deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }} --timeout=600s
   enable-monitor:
     uses: ./../data-otter/monitor-status.yaml
+    if: ${{ inputs.environment == 'production' }}
     needs: build
     with:
       applicationId: ${{ inputs.applicationId }}
