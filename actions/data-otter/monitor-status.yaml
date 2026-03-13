@@ -1,4 +1,4 @@
-name: Data-Otter-Monitor-Status
+name: Data Otter Monitor Status
 
 on:
   workflow_call:

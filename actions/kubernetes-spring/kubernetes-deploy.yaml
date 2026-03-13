@@ -1,4 +1,4 @@
-name: kubernetes-deploy
+name: Kubernetes Deploy
 
 on:
   workflow_call:
