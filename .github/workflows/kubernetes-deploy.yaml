@@ -85,11 +85,11 @@ jobs:
         run: sudo kubectl rollout restart deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }}
       - name: Wait for readiness probe
         if: ${{ inputs.environment == 'production' }}
-        run: sudo kubectl rollout status deployment deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }} --timeout=600s
+        run: sudo kubectl rollout status deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }} --timeout=600s
   enable-monitor:
     uses: ./.github/workflows/monitor-status.yaml
     if: ${{ inputs.environment == 'production' }}
-    needs: build
+    needs: Kubernetes
     with:
       applicationId: ${{ inputs.applicationId }}
       monitorId: ${{ inputs.monitorIds }}
