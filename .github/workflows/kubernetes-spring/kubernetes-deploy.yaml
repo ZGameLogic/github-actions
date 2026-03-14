@@ -61,7 +61,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: SPRING_PROFILES_ACTIVE=${{ inputs.environment }}
   disable-monitor:
-    uses: ./../data-otter/monitor-status.yaml
+    uses: ./.github/workflows/data-otter/monitor-status.yaml
     if: ${{ inputs.environment == 'production' }}
     needs: build
     with:
@@ -85,7 +85,7 @@ jobs:
         if: ${{ inputs.environment == 'production' }}
         run: sudo kubectl rollout status deployment deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }} --timeout=600s
   enable-monitor:
-    uses: ./../data-otter/monitor-status.yaml
+    uses: ./.github/workflows/data-otter/monitor-status.yaml
     if: ${{ inputs.environment == 'production' }}
     needs: build
     with:
