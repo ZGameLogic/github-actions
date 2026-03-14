@@ -72,6 +72,7 @@ jobs:
       active: false
   Kubernetes:
     runs-on: PiServer
+    environment: ${{ inputs.environment }}
     needs: disable-monitor
     if: ${{ !cancelled() && (needs.disable-monitor.result == 'success' || needs.disable-monitor.result == 'skipped') }}
     steps:
