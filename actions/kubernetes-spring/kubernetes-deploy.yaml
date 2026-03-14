@@ -60,9 +60,6 @@ jobs:
           tags: ghcr.io/zgamelogic/${{ inputs.imageName }}:${{ inputs.environment }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: SPRING_PROFILES_ACTIVE=${{ inputs.environment }}
-          ## in the docker file add these lines to use the right active profile
-          ## ARG SPRING_PROFILES_ACTIVE
-          ## ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
   disable-monitor:
     uses: ./../data-otter/monitor-status.yaml
     if: ${{ inputs.environment == 'production' }}
