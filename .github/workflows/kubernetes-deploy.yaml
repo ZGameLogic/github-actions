@@ -5,11 +5,11 @@ on:
     inputs:
       applicationId:
         description: "The data otter ID of the application"
-        required: true
+        required: false
         type: number
       monitorIds:
         description: "List of data otter monitor IDs to disable during deployment"
-        required: true
+        required: false
         type: string
       environment:
         description: 'Environment'
@@ -64,7 +64,7 @@ jobs:
           build-args: SPRING_PROFILES_ACTIVE=${{ inputs.environment }}
   disable-monitor:
     uses: ./.github/workflows/monitor-status.yaml
-    if: ${{ inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'production' && inputs.applicationId && inputs.monitorIds }}
     needs: build
     with:
       applicationId: ${{ inputs.applicationId }}
@@ -89,7 +89,7 @@ jobs:
         run: sudo kubectl rollout status deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }} --timeout=600s
   enable-monitor:
     uses: ./.github/workflows/monitor-status.yaml
-    if: ${{ inputs.environment == 'production' }}
+    if: ${{ inputs.environment == 'production' && inputs.applicationId && inputs.monitorIds }}
     needs: Kubernetes
     with:
       applicationId: ${{ inputs.applicationId }}
