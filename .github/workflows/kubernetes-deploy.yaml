@@ -89,8 +89,8 @@ jobs:
         run: sudo kubectl rollout status deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }} --timeout=600s
   enable-monitor:
     uses: ./.github/workflows/monitor-status.yaml
-    if: ${{ inputs.environment == 'production' && inputs.applicationId && inputs.monitorIds }}
-    needs: Kubernetes
+    if: ${{ !cancelled() && needs.disable-monitor.result == 'success' }}
+    needs: [ Kubernetes, disable-monitor ]
     with:
       applicationId: ${{ inputs.applicationId }}
       monitorId: ${{ inputs.monitorIds }}
