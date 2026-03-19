@@ -47,12 +47,7 @@ jobs:
         run: |
           test -f ~/.m2/settings.xml && sed -E 's/<password>.*<\/password>/<password>***<\/password>/g' ~/.m2/settings.xml || true
       - name: Verify Maven server configuration
-        run: |
-          echo "Checking Maven settings..."
-          # List all servers configured in settings.xml
-          xmllint --xpath "//servers/server/id | //servers/server/username" ~/.m2/settings.xml
-          # Optional: test authentication to GitHub Packages (won’t expose password)
-          mvn -B -s ~/.m2/settings.xml help:effective-settings
+        run: mvn -B -s ~/.m2/settings.xml help:effective-settings
 
       - name: Build project
         run: mvn clean install
