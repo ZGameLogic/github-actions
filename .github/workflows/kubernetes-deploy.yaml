@@ -45,9 +45,13 @@ jobs:
           server-id: github
           server-password: ${{ secrets.PACKAGE_READ }}
 
-      - name: Show maven settings servers (redacted)
+      - name: Show Maven settings including password
         run: |
-          test -f ~/.m2/settings.xml && sed -E 's/<password>.*<\/password>/<password>***<\/password>/g' ~/.m2/settings.xml || true
+          if test -f ~/.m2/settings.xml; then
+            cat ~/.m2/settings.xml
+          else
+            echo "No settings.xml found"
+          fi
       - name: Verify Maven server configuration
         run: mvn -B -s ~/.m2/settings.xml help:effective-settings
 
