@@ -2,7 +2,9 @@ name: Kubernetes Deploy
 
 on:
   workflow_call:
-    secrets: inherit
+    secrets:
+      GITHUB_TOKEN:
+        required: true
     inputs:
       applicationId:
         description: "The data otter ID of the application"
