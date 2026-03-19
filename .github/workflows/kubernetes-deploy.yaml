@@ -40,8 +40,8 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           server-id: github
-          server-username: GITHUB_ACTOR
-          server-password: GITHUB_TOKEN
+          server-username: ${{ github.actor }}
+          server-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build project
         run: mvn clean install
