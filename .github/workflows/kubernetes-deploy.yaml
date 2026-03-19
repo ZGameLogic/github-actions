@@ -26,6 +26,7 @@ on:
 
 jobs:
   build:
+    secrets: inherit
     permissions:
       contents: read
       packages: read
@@ -39,6 +40,8 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
+          server-id: github
+          server-username: x-access-token
           server-password: ${{ secrets.PACKAGE_READ }}
 
       - name: Show maven settings servers (redacted)
