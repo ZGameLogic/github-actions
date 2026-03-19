@@ -43,6 +43,10 @@ jobs:
           server-username: ${{ github.actor }}
           server-password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Show maven settings servers (redacted)
+        run: |
+          test -f ~/.m2/settings.xml && sed -E 's/<password>.*<\/password>/<password>***<\/password>/g' ~/.m2/settings.xml || true
+
       - name: Build project
         run: mvn clean install
 
