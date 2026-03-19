@@ -39,14 +39,6 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-      - name: setup maven settings
-        uses: s4u/maven-settings-action@v4.0.0
-
-      - name: Show maven settings servers (redacted)
-        run: |
-          test -f ~/.m2/settings.xml && sed -E 's/<password>.*<\/password>/<password>***<\/password>/g' ~/.m2/settings.xml || true
-      - name: Verify Maven server configuration
-        run: mvn -B -s ~/.m2/settings.xml help:effective-settings
 
       - name: Build project
         run: mvn clean install
