@@ -39,6 +39,7 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
+          server-password: ${{ secrets.PACKAGE_READ }}
 
       - name: Show maven settings servers (redacted)
         run: |
