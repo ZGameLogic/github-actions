@@ -39,9 +39,8 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-          server-id: github
-          server-username: x-access-token
-          server-password: ${{ github.token }}
+      - name: setup maven settings
+        uses: s4u/maven-settings-action@v4.0.0
 
       - name: Show maven settings servers (redacted)
         run: |
