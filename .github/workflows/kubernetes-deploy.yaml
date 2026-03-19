@@ -39,18 +39,6 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-          server-id: github
-          server-password: ${{ secrets.PACKAGE_READ }}
-
-      - name: Show Maven settings including password
-        run: |
-          if test -f ~/.m2/settings.xml; then
-            cat ~/.m2/settings.xml
-          else
-            echo "No settings.xml found"
-          fi
-      - name: Verify Maven server configuration
-        run: mvn -B -s ~/.m2/settings.xml help:effective-settings
 
       - name: Build project
         run: mvn clean install
