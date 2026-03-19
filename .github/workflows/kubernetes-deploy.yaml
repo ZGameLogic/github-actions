@@ -3,7 +3,7 @@ name: Kubernetes Deploy
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      PACKAGE_READ:
         required: true
     inputs:
       applicationId:
