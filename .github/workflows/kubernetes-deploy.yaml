@@ -40,8 +40,8 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           server-id: github
-          server-username: ${{ github.actor }}
-          server-password: ${{ secrets.GITHUB_TOKEN }}
+          server-username: x-access-token
+          server-password: ${{ github.token }}
 
       - name: Show maven settings servers (redacted)
         run: |
