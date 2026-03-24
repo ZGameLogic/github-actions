@@ -1,0 +1,50 @@
+name: Kubernetes React Deploy
+
+on:
+  workflow_call:
+    inputs:
+      applicationId:
+        description: "The data otter ID of the application"
+        required: false
+        type: number
+      monitorIds:
+        description: "List of data otter monitor IDs to disable during deployment"
+        required: false
+        type: string
+      environment:
+        description: 'Environment'
+        type: string
+        required: true
+      deploymentName:
+        description: "The name of the Kubernetes deployment to update"
+        required: true
+        type: string
+      imageName:
+        description: "The name of the Docker image to deploy"
+        required: true
+        type: string
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      src-change: ${{ steps.filter.outputs.src }}
+      kube-change: ${{ steps.filter.outputs.kube }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            src:
+              - 'src/**'
+              - '*.js'
+              - '*.ts'
+              - '*.json'
+              - 'package.json'
+              - 'Dockerfile'
+            kube:
+              - 'kubernetes/${{ inputs.environment }}/**'

@@ -1,4 +1,4 @@
-name: Kubernetes Deploy
+name: Kubernetes Spring Deploy
 
 on:
   workflow_call:
