@@ -93,8 +93,8 @@ jobs:
 
   disable-monitor:
     uses: ./.github/workflows/monitor-status.yaml
-    if: ${{ inputs.environment == 'production' && inputs.applicationId && inputs.monitorIds }}
-    needs: build
+    if: ${{ inputs.environment == 'production' && inputs.applicationId && inputs.monitorIds && !cancelled() && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
+    needs: [detect-changes, build]
     with:
       applicationId: ${{ inputs.applicationId }}
       monitorId: ${{ inputs.monitorIds }}
