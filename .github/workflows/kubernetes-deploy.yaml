@@ -25,7 +25,29 @@ on:
         type: string
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      src-change: ${{ steps.filter.outputs.src }}
+      kube-change: ${{ steps.filter.outputs.kube }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            src:
+              - 'src/**'
+              - 'pom.xml'
+              - 'Dockerfile'
+            kube:
+              - 'kubernetes/**'
+
   build:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.src-change == 'true' }}
     permissions:
       contents: read
       packages: write
@@ -81,8 +103,8 @@ jobs:
   Kubernetes:
     runs-on: PiServer
     environment: ${{ inputs.environment }}
-    needs: disable-monitor
-    if: ${{ !cancelled() && (needs.disable-monitor.result == 'success' || needs.disable-monitor.result == 'skipped') && needs.build.result == 'success' }}
+    needs: [ detect-changes, build, disable-monitor ]
+    if: ${{ !cancelled() && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
     steps:
       - name: Checkout Kubernetes Directory
         uses: actions/checkout@v4
@@ -90,9 +112,11 @@ jobs:
           sparse-checkout: 'kubernetes/'
 
       - name: Apply Kubernetes Configuration
+        if: ${{ needs.detect-changes.outputs.kube-change == 'true' }}
         run: sudo kubectl apply -f kubernetes/${{inputs.environment}} -n ${{ inputs.environment }}
 
       - name: Rolling update
+        if: ${{ needs.detect-changes.outputs.src-change == 'true' }}
         run: sudo kubectl rollout restart deployment ${{ inputs.deploymentName }} -n ${{ inputs.environment }}
 
       - name: Wait for readiness probe
