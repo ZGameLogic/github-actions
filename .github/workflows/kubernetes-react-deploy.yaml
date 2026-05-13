@@ -91,7 +91,7 @@ jobs:
           push: true
           tags: ghcr.io/zgamelogic/${{ inputs.imageName }}:${{ inputs.environment }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/arm/v7
+          platforms: linux/arm64
 
   disable-monitor:
     uses: ./.github/workflows/monitor-status.yaml
