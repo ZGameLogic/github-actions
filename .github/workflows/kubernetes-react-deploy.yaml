@@ -15,6 +15,11 @@ on:
         description: 'Environment'
         type: string
         required: true
+      forceDeploy:
+        description: "Skip detect-changes and force src/kube changes to true"
+        required: false
+        type: boolean
+        default: false
       deploymentName:
         description: "The name of the Kubernetes deployment to update"
         required: true
@@ -28,13 +33,15 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      src-change: ${{ steps.filter.outputs.src }}
-      kube-change: ${{ steps.filter.outputs.kube }}
+      src-change: ${{ inputs.forceDeploy && 'true' || steps.filter.outputs.src }}
+      kube-change: ${{ inputs.forceDeploy && 'true' || steps.filter.outputs.kube }}
     steps:
       - name: Checkout
+        if: ${{ !inputs.forceDeploy }}
         uses: actions/checkout@v6
 
       - name: Detect changes
+        if: ${{ !inputs.forceDeploy }}
         id: filter
         uses: dorny/paths-filter@v4
         with:
