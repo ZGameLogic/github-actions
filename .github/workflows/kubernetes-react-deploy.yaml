@@ -82,6 +82,8 @@ jobs:
         run: npm ci
 
       - name: Build React App
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm run build:${{ inputs.environment }}
 
       - name: Log in to the Container registry
