@@ -82,11 +82,15 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker images
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
+          platforms: linux/arm64
           push: true
           tags: ghcr.io/zgamelogic/${{ inputs.imageName }}:${{ inputs.environment }}
           labels: ${{ steps.meta.outputs.labels }}
